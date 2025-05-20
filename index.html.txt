@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        #game-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #word-display {
+            font-size: 24px;
+            letter-spacing: 5px;
+        }
+
+        #letter-input {
+            font-size: 18px;
+            padding: 5px;
+            margin-top: 10px;
+        }
+
+        #guess-button {
+            font-size: 18px;
+            padding: 5px 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Hangman Game</h1>
+        <p id="word-display">_ _ _ _ _ _ _ _</p>
+        <p>Attempts remaining: <span id="attempts-remaining">6</span></p>
+        <input type="text" id="letter-input" maxlength="1" placeholder="Guess a letter">
+        <button id="guess-button">Guess</button>
+        <p id="message"></p>
+    </div>
+        <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const attemptsElement = document.getElementById('attempts-remaining');
+        const wordDisplayElement = document.getElementById('word-display');
+        const messageElement = document.getElementById('message');
+        const letterInput = document.getElementById('letter-input');
+        const guessButton = document.getElementById('guess-button');
+
+        let attemptsRemaining = 6;
+        let guessedLetters = new Set();
+        let selectedWord = '';
+
+        const fetchWord = async () => {
+            const response = await fetch('http://localhost:3000/word');
+            const data = await response.json();
+            return data.word;
+        };
+
+        selectedWord = await fetchWord();
+        console.log(`Selected word: ${selectedWord}`); // For debugging
+
+        const updateWordDisplay = () => {
+            const display = selectedWord.split('').map(letter => guessedLetters.has(letter) ? letter : '_').join(' ');
+            wordDisplayElement.textContent = display;
+        };
+
+        const checkWinCondition = () => {
+            return selectedWord.split('').every(letter => guessedLetters.has(letter));
+        };
+
+        guessButton.addEventListener('click', () => {
+            const guess = letterInput.value.toLowerCase();
+            letterInput.value = '';
+
+            if (!guess || guess.length !== 1 || !/^[a-z]$/.test(guess)) {
+                messageElement.textContent = 'Please enter a valid single letter.';
+                return;
+            }
+
+            if (guessedLetters.has(guess)) {
+                messageElement.textContent = 'You already guessed that letter.';
+                return;
+            }
+
+            guessedLetters.add(guess);
+
+            if (selectedWord.includes(guess)) {
+                messageElement.textContent = `Good guess! '${guess}' is in the word.`;
+            } else {
+                attemptsRemaining -= 1;
+                messageElement.textContent = `Sorry, '${guess}' is not in the word.`;
+            }
+
+            updateWordDisplay();
+            attemptsElement.textContent = attemptsRemaining;
+
+            if (checkWinCondition()) {
+                messageElement.textContent = `Congratulations! You guessed the word: ${selectedWord}`;
+                letterInput.disabled = true;
+                guessButton.disabled = true;
+            } else if (attemptsRemaining <= 0) {
+                messageElement.textContent = `Game over! The word was: ${selectedWord}`;
+                letterInput.disabled = true;
+                guessButton.disabled = true;
+            }
+        });
+
+        updateWordDisplay();
+    });
+</script>
+</body>
+</html>

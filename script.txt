@@ -1,0 +1,144 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const optionsContainer = document.getElementById("options-container");
+  const letterContainer = document.getElementById("letter-container");
+  const userInputSection = document.getElementById("user-input-section");
+  const canvas = document.getElementById("canvas");
+  const newGameContainer = document.getElementById("new-game-container");
+  const resultText = document.getElementById("result-text");
+  const newGameButton = document.getElementById("new-game-button");
+
+  const options = {
+    fruits: ["apple", "banana", "orange", "grape", "pineapple", "kiwi"],
+    animals: ["elephant", "giraffe", "penguin", "dolphin", "kangaroo"],
+    countries: ["canada", "india", "brazil", "germany", "japan"]
+  };
+
+  let chosenWord = "";
+  let mistakes = 0;
+  const maxMistakes = 6;
+  let guessedLetters = [];
+  let correctGuesses = [];
+
+  const drawCanvas = () => {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 2;
+
+    // Draw the gallows
+    ctx.beginPath();
+    ctx.moveTo(10, canvas.height - 10);
+    ctx.lineTo(canvas.width - 10, canvas.height - 10);
+    ctx.moveTo(canvas.width / 2, canvas.height - 10);
+    ctx.lineTo(canvas.width / 2, 10);
+    ctx.lineTo(canvas.width - 50, 10);
+    ctx.lineTo(canvas.width - 50, 30);
+    ctx.stroke();
+
+    // Draw the parts based on mistakes
+    if (mistakes > 0) { // Head
+      ctx.beginPath();
+      ctx.arc(canvas.width - 50, 50, 20, 0, Math.PI * 2, true);
+      ctx.stroke();
+    }
+    if (mistakes > 1) { // Body
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50, 70);
+      ctx.lineTo(canvas.width - 50, 130);
+      ctx.stroke();
+    }
+    if (mistakes > 2) { // Left arm
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50, 90);
+      ctx.lineTo(canvas.width - 80, 110);
+      ctx.stroke();
+    }
+    if (mistakes > 3) { // Right arm
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50, 90);
+      ctx.lineTo(canvas.width - 20, 110);
+      ctx.stroke();
+    }
+    if (mistakes > 4) { // Left leg
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50, 130);
+      ctx.lineTo(canvas.width - 80, 160);
+      ctx.stroke();
+    }
+    if (mistakes > 5) { // Right leg
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 50, 130);
+      ctx.lineTo(canvas.width - 20, 160);
+      ctx.stroke();
+    }
+  };
+
+  const chooseCategory = (category) => {
+    const words = options[category];
+    chosenWord = words[Math.floor(Math.random() * words.length)];
+    guessedLetters = [];
+    correctGuesses = Array(chosenWord.length).fill("_");
+    mistakes = 0;
+    drawCanvas();
+    displayWord();
+    letterContainer.classList.remove("hide");
+    userInputSection.classList.remove("hide");
+    optionsContainer.classList.add("hide");
+  };
+
+  const displayWord = () => {
+    userInputSection.innerHTML = correctGuesses.join(" ");
+  };
+
+  const handleLetterClick = (letter) => {
+    if (guessedLetters.includes(letter)) return;
+    guessedLetters.push(letter);
+    if (chosenWord.includes(letter)) {
+      chosenWord.split("").forEach((char, index) => {
+        if (char === letter) {
+          correctGuesses[index] = letter;
+        }
+      });
+      displayWord();
+      if (!correctGuesses.includes("_")) {
+        resultText.innerHTML = `<h2 class="win-msg">You Win!</h2>`;
+        newGameContainer.classList.remove("hide");
+        letterContainer.classList.add("hide");
+      }
+    } else {
+      mistakes++;
+      drawCanvas();
+      if (mistakes === maxMistakes) {
+        resultText.innerHTML = `<h2 class="lose-msg">You Lose!</h2><p>The word was: <span>${chosenWord}</span></p>`;
+        newGameContainer.classList.remove("hide");
+        letterContainer.classList.add("hide");
+      }
+    }
+  };
+
+  const createButtons = () => {
+    optionsContainer.innerHTML = "";
+    Object.keys(options).forEach(category => {
+      const button = document.createElement("button");
+      button.innerText = category;
+      button.addEventListener("click", () => chooseCategory(category));
+      optionsContainer.appendChild(button);
+    });
+
+    letterContainer.innerHTML = "";
+    for (let i = 65; i <= 90; i++) {
+      const letter = String.fromCharCode(i).toLowerCase();
+      const button = document.createElement("button");
+      button.innerText = letter;
+      button.addEventListener("click", () => handleLetterClick(letter));
+      letterContainer.appendChild(button);
+    }
+  };
+
+  newGameButton.addEventListener("click", () => {
+    newGameContainer.classList.add("hide");
+    optionsContainer.classList.remove("hide");
+    drawCanvas();
+  });
+
+  createButtons();
+});

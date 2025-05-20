@@ -1,0 +1,115 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+/* Game Container */
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: url('https://t4.ftcdn.net/jpg/02/62/24/45/360_F_262244537_RjHfRBucxPyo7o6QetIAQYpd5O3h6cEN.jpg') no-repeat center center fixed;
+  background-size: cover; /* Ensure the image covers the entire container */
+}
+
+/* Canvas Style */
+#canvas {
+  border: 10px solid #000;
+  background-color: #fff; /* White background for the canvas */
+}
+
+/* User Input Section */
+#user-input-section {
+  color: #fff;
+  margin: 20px;
+  font-size: 20px; /* Adjusted font size */
+  font-weight: bold;
+}
+
+/* Letter Container */
+#letter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Increased gap between letters */
+  margin: 20px;
+}
+
+/* Letter Buttons */
+.letters {
+  font-size: 15px; /* Adjusted font size for letter buttons */
+  padding: 10px;   /* Adjust padding if necessary */
+  margin: 5px;     /* Adjust margin if necessary */
+  border: 1px solid #ddd;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.letters:hover {
+  background-color: #ddd;
+}
+
+/* Option Container */
+#options-container {
+  color: #fff;
+  margin: 20px;
+  font-size: 28px; /* Increased font size for option buttons */
+}
+
+/* Option Buttons */
+.options {
+  font-size: 28px; /* Font size for option buttons */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: 2px solid #fff; /* Border color to ensure visibility */
+  background-color: #bb9e5f; /* Background color of option buttons */
+  color: #fff; /* Font color for option buttons */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px; /* Space between buttons */
+}
+
+.options:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Result Text */
+#result-text {
+  color: #fff;
+  font-size: 25px; /* Increased font size for result text */
+  font-weight: bold;
+  margin: 80px;
+}
+
+/* New Game Container */
+#new-game-container {
+  position: fixed; /* Keeps the button in a fixed position */
+  bottom: 20px; /* Distance from the bottom of the viewport */
+  right: 20px; /* Distance from the right of the viewport */
+  z-index: 1000; /* Ensures the button is on top of other content */
+}
+
+/* New Game Button */
+#new-game-button {
+  padding: 10px 20px; /* Adjust button size */
+  font-size: 16px; /* Adjust font size if needed */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #28a745; /* Background color for new game button */
+  color: #fff; /* Text color */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#new-game-button:hover {
+  background-color: #218838; /* Hover color */
+}
+
+/* Hide class for hidden elements */
+.hide {
+  display: none;
+}
